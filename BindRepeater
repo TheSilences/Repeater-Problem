@@ -1,0 +1,21 @@
+private void BindArea()
+{
+    IEnumerable<GroupAreaAttr> provinces = new Table_GroupAreaAttr().GetGroupAreaAttrList(CurrentUser.CategoryID);
+    var areas = provinces.GroupBy(a => a.Area).Select(a => new GroupAreaAttr { Area = a.Key });
+    Repeater_Area.DataSource = areas;
+    Repeater_Area.DataBind();
+}
+
+protected void Repeater_Area_ItemDataBound(object sender, RepeaterItemEventArgs e)
+{
+    if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
+    {
+        Repeater Repeater_Province = e.Item.FindControl("Repeater_Province") as Repeater;
+        //DataRowView rowv = (DataRowView)e.Item.DataItem;//找到分类Repeater关联的数据项 
+        //string area = rowv["Area"].SafeToString(); //获取填充子类的id 
+        var model = (GroupAreaAttr)e.Item.DataItem;
+        string area = model.Area;
+        Repeater_Province.DataSource = new Table_GroupAreaAttr().GetGroupProvinceList(CurrentUser.CategoryID, area);
+        Repeater_Province.DataBind();
+    }
+}
